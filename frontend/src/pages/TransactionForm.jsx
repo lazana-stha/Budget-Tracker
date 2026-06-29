@@ -1,49 +1,73 @@
-import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
-export default function TransactionForm() {
-  const navigate = useNavigate();
+export default function TransactionForm({ onAdd, onCancel }) {
+  const [title, setTitle] = useState("");
+  const [amount, setAmount] = useState("");
+  const [type, setType] = useState("income");
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    if (!title || !amount) return;
+
+    onAdd({
+      title,
+      amount: Number(amount),
+      type,
+    });
+
+    setTitle("");
+    setAmount("");
+    setType("income");
+  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100 flex justify-center items-center">
-      <form className="bg-white rounded-3xl shadow-xl p-8 w-96">
-        <h2 className="text-3xl font-bold text-center text-emerald-700 mb-6">
-          Add Transaction
-        </h2>
+    <form onSubmit={handleSubmit} className="bg-white p-5 rounded-lg">
+      <h2 className="text-xl font-semibold mb-4 text-center">
+        Add Transaction
+      </h2>
 
-        <input
-          type="text"
-          placeholder="Transaction Name"
-          className="border-2 border-gray-200 rounded-xl p-3 w-full mb-4 outline-none focus:border-emerald-500"
-        />
+      <input
+        type="text"
+        placeholder="Title"
+        className="border p-2 w-full mb-3"
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
+      />
 
-        <input
-          type="number"
-          placeholder="Amount"
-          className="border-2 border-gray-200 rounded-xl p-3 w-full mb-4 outline-none focus:border-emerald-500"
-        />
+      <input
+        type="number"
+        placeholder="Amount"
+        className="border p-2 w-full mb-3"
+        value={amount}
+        onChange={(e) => setAmount(e.target.value)}
+      />
 
-        <select className="border-2 border-gray-200 rounded-xl p-3 w-full mb-6 outline-none focus:border-emerald-500">
-          <option>Income</option>
-          <option>Expense</option>
-        </select>
+      <select
+        className="border p-2 w-full mb-4"
+        value={type}
+        onChange={(e) => setType(e.target.value)}
+      >
+        <option value="income">Income</option>
+        <option value="expense">Expense</option>
+      </select>
 
-        <div className="flex gap-4">
-          <button
-            type="submit"
-            className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white py-3 rounded-xl font-semibold"
-          >
-            Save
-          </button>
+      <div className="flex justify-between">
+        <button
+          type="submit"
+          className="bg-green-500 text-white px-4 py-2 rounded"
+        >
+          Add
+        </button>
 
-          <button
-            type="button"
-            onClick={() => navigate("/")}
-            className="flex-1 bg-gray-500 hover:bg-gray-600 text-white py-3 rounded-xl font-semibold"
-          >
-            Cancel
-          </button>
-        </div>
-      </form>
-    </div>
+        <button
+          type="button"
+          onClick={onCancel}
+          className="bg-gray-400 text-white px-4 py-2 rounded"
+        >
+          Cancel
+        </button>
+      </div>
+    </form>
   );
 }

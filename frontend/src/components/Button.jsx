@@ -1,11 +1,10 @@
-import { Link } from "react-router-dom";
-
-export default function Button() {
+export default function Button({ data = "Add Transaction", onClick }) {
   return (
-    <Link to="/add">
-      <button className="bg-emerald-600 hover:bg-emerald-700 transition text-white font-semibold px-8 py-3 rounded-xl shadow-lg">
-        + Add Transaction
-      </button>
-    </Link>
+    <button
+      onClick={onClick}
+      className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition"
+    >
+      {data}
+    </button>
   );
 }
