@@ -5,7 +5,7 @@ function TransactionItem({ transaction }) {
     <div className="flex items-center justify-between bg-gray-50 rounded-lg overflow-hidden">
       {/* LEFT COLOR BAR */}
       <div
-        className={`w-2 h-full ${isIncome ? "bg-red-500" : "bg-green-500"}`}
+        className={`w-2 h-full ${isIncome ? "bg-green-600" : "bg-red-500"}`}
       ></div>
 
       {/* CONTENT */}
@@ -17,7 +17,7 @@ function TransactionItem({ transaction }) {
 
         <p
           className={`font-semibold ${
-            isIncome ? "text-red-500" : "text-green-600"
+            isIncome ? "text-green-600" : "text-red-500"
           }`}
         >
           {isIncome ? "+" : "-"} Rs. {transaction.amount}
