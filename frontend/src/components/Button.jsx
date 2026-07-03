@@ -1,8 +1,8 @@
-export default function Button({ data = "Add Transaction", onClick }) {
+export default function Button({ data = "Add New", onClick }) {
   return (
     <button
       onClick={onClick}
-      className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition"
+      className="bg-black text-white px-5 py-2 rounded-lg hover:bg-gray-800 transition"
     >
       {data}
     </button>

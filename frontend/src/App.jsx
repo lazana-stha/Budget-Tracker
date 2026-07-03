@@ -1,69 +1,63 @@
-import { useState, useEffect } from "react";
-import BalanceSummary from "./components/BalanceSummary";
-import TransactionList from "./components/TransactionList";
+import { useEffect, useState } from "react";
+import Navbar from "./components/Navbar";
 import Button from "./components/Button";
+import BalanceSummary from "./components/BalanceSummary";
 import TransactionForm from "./pages/TransactionForm";
-import { saveTransactions, getTransactions } from "./utils/storage";
+import TransactionList from "./components/TransactionList";
+import CategoryChart from "./components/CategoryChart";
+import { getTransactions, saveTransactions } from "./utils/storage";
 
 function App() {
+  const [transactions, setTransactions] = useState(() => getTransactions());
   const [showForm, setShowForm] = useState(false);
 
-  // ✅ Load from localStorage OR fallback to hardcoded data
-  const [transactions, setTransactions] = useState(() => {
-    const stored = getTransactions();
-
-    return stored.length > 0
-      ? stored
-      : [
-          { id: 1, title: "Salary", amount: 50000, type: "income" },
-          { id: 2, title: "Freelance", amount: 15000, type: "income" },
-          { id: 3, title: "Groceries", amount: 2500, type: "expense" },
-          { id: 4, title: "Rent", amount: 12000, type: "expense" },
-          { id: 5, title: "Transport", amount: 1500, type: "expense" },
-        ];
-  });
-
-  // ✅ Save to localStorage whenever transactions change
   useEffect(() => {
     saveTransactions(transactions);
   }, [transactions]);
 
-  const addTransaction = (data) => {
-    const newTransaction = {
-      id: Date.now(),
-      ...data,
-    };
+  const income = transactions
+    .filter((t) => t.type === "income")
+    .reduce((sum, t) => sum + Number(t.amount), 0);
 
-    setTransactions([newTransaction, ...transactions]);
+  const expense = transactions
+    .filter((t) => t.type === "expense")
+    .reduce((sum, t) => sum + Number(t.amount), 0);
+
+  const balance = income - expense;
+
+  const handleAdd = (transaction) => {
+    setTransactions((prev) => [
+      { ...transaction, id: Date.now(), amount: Number(transaction.amount) },
+      ...prev,
+    ]);
     setShowForm(false);
   };
 
+  const handleDelete = (id) => {
+    setTransactions((prev) => prev.filter((t) => t.id !== id));
+  };
+
   return (
-    <div className="min-h-screen bg-gray-200 px-4 py-10">
-      <div className="max-w-2xl mx-auto">
-        {/* HEADER */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold mb-2">Budget Tracker</h1>
-          <p className="text-gray-600 text-lg">
-            Track your income and expenses easily
-          </p>
+    <div className="bg-gray-100 min-h-screen">
+      <Navbar />
+
+      <div className="max-w-4xl mx-auto p-6">
+        <BalanceSummary income={income} expense={expense} balance={balance} />
+
+        <div className="flex justify-end mb-4">
+          <Button data="Add Transaction" onClick={() => setShowForm(true)} />
         </div>
 
-        {!showForm ? (
-          <>
-            <div className="flex justify-center mb-6">
-              <Button onClick={() => setShowForm(true)} />
-            </div>
-
-            <BalanceSummary transactions={transactions} />
-            <TransactionList transactions={transactions} />
-          </>
-        ) : (
+        {showForm && (
           <TransactionForm
-            onAdd={addTransaction}
+            onAdd={handleAdd}
             onCancel={() => setShowForm(false)}
           />
         )}
+
+        <TransactionList transactions={transactions} onDelete={handleDelete} />
+
+        <CategoryChart transactions={transactions} />
       </div>
     </div>
   );

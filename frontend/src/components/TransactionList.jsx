@@ -1,20 +1,17 @@
 import TransactionItem from "./TransactionItem";
 
-function TransactionList({ transactions }) {
+function TransactionList({ transactions, onDelete }) {
   return (
-    <div className="bg-white p-6 rounded-xl shadow-sm">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-lg font-semibold">Recent Transactions</h2>
-        <span className="text-sm text-gray-500">
-          {transactions.length} items
-        </span>
-      </div>
+    <div className="bg-white p-6 rounded-xl shadow-sm space-y-3">
+      <h2 className="text-lg font-semibold">Recent Transactions</h2>
 
-      <div className="space-y-3">
-        {transactions.map((t) => (
-          <TransactionItem key={t.id} transaction={t} />
-        ))}
-      </div>
+      {transactions.length === 0 && (
+        <p className="text-gray-500">No transactions yet</p>
+      )}
+
+      {transactions.map((t) => (
+        <TransactionItem key={t.id} transaction={t} onDelete={onDelete} />
+      ))}
     </div>
   );
 }
