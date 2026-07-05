@@ -1,11 +1,14 @@
-function TransactionItem({ transaction, onDelete }) {
+function TransactionItem({ transaction, onDelete, onClick }) {
   const isIncome = transaction.type === "income";
 
   return (
-    <div className="flex justify-between items-center bg-gray-50 p-4 rounded-lg border border-gray-100 hover:border-gray-200 transition">
+    <div
+      onClick={onClick}
+      className="flex justify-between items-center bg-gray-50 p-4 rounded-lg border border-gray-100 hover:border-gray-300 hover:shadow-sm transition cursor-pointer"
+    >
       <div>
-        <p className="font-medium">{transaction.title}</p>
-        <small className="text-gray-500">{transaction.category}</small>
+        <p className="font-medium capitalize">{transaction.category}</p>
+        <small className="text-gray-500">{transaction.date}</small>
       </div>
 
       <div className="flex items-center gap-4">
@@ -19,7 +22,10 @@ function TransactionItem({ transaction, onDelete }) {
         </p>
 
         <button
-          onClick={() => onDelete(transaction.id)}
+          onClick={(e) => {
+            e.stopPropagation(); // don't trigger the modal when deleting
+            onDelete(transaction.id);
+          }}
           className="text-red-500 hover:scale-110 transition-transform"
           aria-label="Delete transaction"
         >
