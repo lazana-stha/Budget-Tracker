@@ -1,4 +1,4 @@
-// Small confirm-style popup — used only for the delete confirmation
+// Reusable modal: backdrop click or the ✕ button both close it
 function Modal({ isOpen, onClose, children }) {
   if (!isOpen) return null;
 
@@ -8,9 +8,16 @@ function Modal({ isOpen, onClose, children }) {
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-2xl shadow-xl max-w-sm w-full p-6"
+        className="bg-white rounded-xl shadow-lg max-w-md w-full p-6 relative"
         onClick={(e) => e.stopPropagation()}
       >
+        <button
+          onClick={onClose}
+          className="absolute top-3 right-3 text-gray-400 hover:text-gray-700 transition"
+          aria-label="Close"
+        >
+          ✕
+        </button>
         {children}
       </div>
     </div>
