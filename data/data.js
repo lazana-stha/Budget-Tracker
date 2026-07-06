@@ -1,0 +1,58 @@
+const data = [
+  {
+    id: 1782792783094,
+    title: "Salary",
+    amount: 7990,
+    type: "income",
+    category: "Salary",
+    description: "",
+    date: "2026-07-06",
+  },
+  {
+    id: 1,
+    title: "Salary",
+    amount: 50000,
+    type: "income",
+    category: "Salary",
+    description: "",
+    date: "2026-07-01",
+  },
+  {
+    id: 2,
+    title: "Freelance",
+    amount: 15000,
+    type: "income",
+    category: "Freelance",
+    description: "",
+    date: "2026-07-02",
+  },
+  {
+    id: 3,
+    title: "Groceries",
+    amount: 2500,
+    type: "expense",
+    category: "Food",
+    description: "",
+    date: "2026-07-03",
+  },
+  {
+    id: 4,
+    title: "Rent",
+    amount: 12000,
+    type: "expense",
+    category: "Housing",
+    description: "",
+    date: "2026-07-01",
+  },
+  {
+    id: 5,
+    title: "Transport",
+    amount: 1500,
+    type: "expense",
+    category: "Transport",
+    description: "",
+    date: "2026-07-04",
+  },
+];
+
+export default data;
