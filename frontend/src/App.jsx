@@ -4,14 +4,27 @@ import Navbar from "./components/Navbar";
 import Dashboard from "./pages/Dashboard";
 import Transactions from "./pages/Transactions";
 import TransactionForm from "./components/TransactionForm";
-import { getTransactions, saveTransactions } from "./utils/storage";
+import { getData, addData, updateData, deleteData } from "./api/transactionApi";
 
 function App() {
-  const [transactions, setTransactions] = useState(() => getTransactions());
+  const [transactions, setTransactions] = useState([]);
+
+  const [error, setError] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    saveTransactions(transactions);
-  }, [transactions]);
+    async function loadData() {
+      try {
+        const response = await getData();
+        setTransactions(Array.isArray(response.data) ? response.data : []);
+      } catch (error) {
+        setError((prev) => [...prev, error]);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    loadData();
+  }, []);
 
   const income = useMemo(
     () =>
@@ -35,26 +48,49 @@ function App() {
     document.title = `Balance: Rs ${balance.toLocaleString()}`;
   }, [balance]);
 
-  const handleAdd = (transaction) => {
-    setTransactions((prev) => [
-      { ...transaction, id: Date.now(), amount: Number(transaction.amount) },
-      ...prev,
-    ]);
+  const handleAdd = async (transaction) => {
+    try {
+      const res = await addData(transaction);
+      setTransactions((prev) => [res.data, ...prev]);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
-  const handleDelete = (id) => {
-    setTransactions((prev) => prev.filter((t) => t.id !== id));
+  const handleDelete = async (id) => {
+    try {
+      await deleteData(id);
+      setTransactions((prev) => prev.filter((t) => t._id !== id));
+    } catch (err) {
+      console.error(err);
+    }
   };
 
-  const handleUpdate = (id, updated) => {
-    setTransactions((prev) =>
-      prev.map((t) =>
-        String(t.id) === String(id)
-          ? { ...t, ...updated, amount: Number(updated.amount) }
-          : t,
-      ),
+  const handleUpdate = async (id, updated) => {
+    try {
+      const res = await updateData(id, updated);
+      setTransactions((prev) => prev.map((t) => (t._id === id ? res.data : t)));
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  // ✅ put this BEFORE return
+  if (isLoading) {
+    return <p className="p-4">Loading...</p>;
+  }
+
+  if (error.length > 0) {
+    return (
+      <div className="p-4">
+        {error.map((err, index) => (
+          <p key={index} className="text-red-500">
+            {err.message || err.toString()}
+          </p>
+        ))}
+      </div>
     );
-  };
+  }
 
   return (
     <div className="bg-gray-50 min-h-screen">
@@ -78,12 +114,7 @@ function App() {
             <Transactions transactions={transactions} onDelete={handleDelete} />
           }
         />
-        <Route
-          path="/add"
-          element={
-            <TransactionForm transactions={transactions} onAdd={handleAdd} />
-          }
-        />
+        <Route path="/add" element={<TransactionForm onAdd={handleAdd} />} />
         <Route
           path="/edit/:id"
           element={
